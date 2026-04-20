@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intruder</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Trebuchet MS', 'Arial Black', sans-serif;
+    }
+
+    .intro-screen {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at center, #2a2a2a 0%, #0d0d0d 70%, #000000 100%);
+    }
+
+    /* === BACKGROUND GLITCH === */
+    .intro-screen::before {
+      content: '';
+      position: absolute;
+      inset: -5%;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(140, 180, 140, 0.015) 2px,
+          rgba(140, 180, 140, 0.015) 4px
+        );
+      animation: bgGlitch 4s infinite steps(1);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .intro-screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      animation: scanline 8s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Scanline moving down */
+    @keyframes scanline {
+      0%   { box-shadow: 0 -100vh 60px 10px rgba(140, 200, 150, 0.04); }
+      100% { box-shadow: 0 100vh 60px 10px rgba(140, 200, 150, 0.04); }
+    }
+
+    /* Background glitch flicker */
+    @keyframes bgGlitch {
+      0%   { opacity: 0.5; transform: translate(0, 0); }
+      2%   { opacity: 1;   transform: translate(-2px, 1px); }
+      4%   { opacity: 0.6; transform: translate(2px, -1px); }
+      5%   { opacity: 0.5; transform: translate(0, 0); }
+      20%  { opacity: 0.5; transform: translate(0, 0); }
+      21%  { opacity: 0.9; transform: translate(3px, 0); }
+      22%  { opacity: 0.5; transform: translate(0, 0); }
+      50%  { opacity: 0.5; transform: translate(0, 0); }
+      51%  { opacity: 1;   transform: translate(-1px, 2px); }
+      52%  { opacity: 0.4; transform: translate(1px, -1px) skewX(0.5deg); }
+      53%  { opacity: 0.5; transform: translate(0, 0); }
+      70%  { opacity: 0.5; transform: translate(0, 0); }
+      71%  { opacity: 0.8; transform: translate(0, 1px); }
+      72%  { opacity: 0.5; transform: translate(0, 0); }
+      100% { opacity: 0.5; transform: translate(0, 0); }
+    }
+
+    /* Glitch color split layers */
+    .glitch-layers {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glitch-layers .layer {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, #2a2a2a 0%, #0d0d0d 70%, #000000 100%);
+    }
+
+    .glitch-layers .layer:nth-child(1) {
+      mix-blend-mode: screen;
+      animation: glitchLayer1 5s infinite steps(1);
+    }
+    .glitch-layers .layer:nth-child(2) {
+      mix-blend-mode: screen;
+      animation: glitchLayer2 5s infinite steps(1);
+    }
+
+    @keyframes glitchLayer1 {
+      0%, 100% { clip-path: inset(0 0 100% 0); }
+      20%      { clip-path: inset(30% 0 40% 0); transform: translate(-4px, 0); filter: hue-rotate(90deg); }
+      21%      { clip-path: inset(0 0 100% 0); transform: translate(0); filter: none; }
+      50%      { clip-path: inset(60% 0 10% 0); transform: translate(3px, 0); filter: hue-rotate(60deg); }
+      51%      { clip-path: inset(0 0 100% 0); transform: translate(0); filter: none; }
+      75%      { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); filter: hue-rotate(120deg); }
+      76%      { clip-path: inset(0 0 100% 0); transform: translate(0); filter: none; }
+    }
+
+    @keyframes glitchLayer2 {
+      0%, 100% { clip-path: inset(0 0 100% 0); }
+      15%      { clip-path: inset(50% 0 20% 0); transform: translate(5px, 0); filter: hue-rotate(-60deg); }
+      16%      { clip-path: inset(0 0 100% 0); transform: translate(0); filter: none; }
+      45%      { clip-path: inset(20% 0 50% 0); transform: translate(-3px, 0); filter: hue-rotate(-90deg); }
+      46%      { clip-path: inset(0 0 100% 0); transform: translate(0); filter: none; }
+      80%      { clip-path: inset(70% 0 5% 0); transform: translate(4px, 0); filter: hue-rotate(180deg); }
+      81%      { clip-path: inset(0 0 100% 0); transform: translate(0); filter: none; }
+    }
+
+    /* Horizontal light flare */
+    .flare {
+      position: absolute;
+      top: 38%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(160, 200, 170, 0.15) 20%, rgba(180, 210, 180, 0.4) 45%, rgba(200, 220, 190, 0.6) 50%, rgba(180, 210, 180, 0.4) 55%, rgba(160, 200, 170, 0.15) 80%, transparent 100%);
+      box-shadow: 0 0 40px 20px rgba(160, 200, 170, 0.08), 0 0 80px 40px rgba(160, 200, 170, 0.04);
+      animation: flarePulse 3s ease-in-out infinite alternate, flareGlitch 6s steps(1) infinite;
+      z-index: 1;
+    }
+
+    @keyframes flarePulse {
+      0%   { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes flareGlitch {
+      0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.8; }
+      5%       { transform: translateY(3px) scaleX(1.05); opacity: 1; filter: brightness(2); }
+      6%       { transform: translateY(-2px) scaleX(0.97); opacity: 0.4; }
+      7%       { transform: translateY(0) scaleX(1); opacity: 0.8; filter: none; }
+      30%      { transform: translateY(0) scaleX(1); }
+      31%      { transform: translateY(-4px) scaleX(1.1); opacity: 1; filter: brightness(2.5); }
+      32%      { transform: translateY(2px) scaleX(0.9); opacity: 0.3; }
+      33%      { transform: translateY(1px) scaleX(1.02); opacity: 1; }
+      34%      { transform: translateY(0) scaleX(1); opacity: 0.8; filter: none; }
+      60%      { transform: translateY(0) scaleX(1); }
+      61%      { transform: translateY(5px) scaleX(0.95); opacity: 0.5; filter: brightness(1.8); }
+      62%      { transform: translateY(-1px) scaleX(1.08); opacity: 1; }
+      63%      { transform: translateY(0) scaleX(1); opacity: 0.8; filter: none; }
+      85%      { transform: translateY(0) scaleX(1); }
+      86%      { transform: translateY(-2px) scaleX(1.03); opacity: 1; filter: brightness(2); }
+      87%      { transform: translateY(0) scaleX(1); opacity: 0.8; filter: none; }
+    }
+
+    .title {
+      font-size: 7rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #8fa88e;
+      text-shadow:
+        0 0 20px rgba(140, 180, 140, 0.3),
+        0 0 40px rgba(140, 180, 140, 0.15),
+        0 2px 4px rgba(0, 0, 0, 0.8);
+      font-style: italic;
+      margin-bottom: 60px;
+      user-select: none;
+      position: relative;
+      z-index: 2;
+      animation: titleGlitch 4.5s steps(1) infinite;
+    }
+
+    .title::before,
+    .title::after {
+      content: 'Intruder';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .title::before {
+      color: #ff003c;
+      z-index: -1;
+      animation: titleGlitchR 3.5s steps(1) infinite;
+    }
+
+    .title::after {
+      color: #00ff9f;
+      z-index: -1;
+      animation: titleGlitchG 3.5s steps(1) infinite 0.15s;
+    }
+
+    @keyframes titleGlitch {
+      0%, 100% { transform: translate(0); }
+      7%       { transform: translate(-3px, 1px) skewX(-1deg); }
+      8%       { transform: translate(2px, -1px) skewX(0.5deg); }
+      9%       { transform: translate(0); }
+      40%      { transform: translate(0); }
+      41%      { transform: translate(2px, 2px) skewX(0.8deg); }
+      42%      { transform: translate(-1px, -1px); }
+      43%      { transform: translate(0); }
+      72%      { transform: translate(0); }
+      73%      { transform: translate(-2px, 0) skewX(-0.5deg); }
+      74%      { transform: translate(3px, 1px) skewX(0.3deg); }
+      75%      { transform: translate(0); }
+    }
+
+    @keyframes titleGlitchR {
+      0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      10%      { clip-path: inset(15% 0 60% 0); transform: translate(-4px, 0); }
+      11%      { clip-path: inset(65% 0 10% 0); transform: translate(3px, 0); }
+      12%      { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      45%      { clip-path: inset(40% 0 30% 0); transform: translate(-3px, 0); }
+      46%      { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      78%      { clip-path: inset(5% 0 80% 0); transform: translate(5px, 0); }
+      79%      { clip-path: inset(50% 0 20% 0); transform: translate(-2px, 0); }
+      80%      { clip-path: inset(0 0 100% 0); transform: translate(0); }
+    }
+
+    @keyframes titleGlitchG {
+      0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      12%      { clip-path: inset(60% 0 15% 0); transform: translate(4px, 0); }
+      13%      { clip-path: inset(10% 0 70% 0); transform: translate(-3px, 0); }
+      14%      { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      48%      { clip-path: inset(25% 0 50% 0); transform: translate(3px, 0); }
+      49%      { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      80%      { clip-path: inset(70% 0 5% 0); transform: translate(-4px, 0); }
+      81%      { clip-path: inset(30% 0 45% 0); transform: translate(2px, 0); }
+      82%      { clip-path: inset(0 0 100% 0); transform: translate(0); }
+    }
+
+    /* === PLAY BUTTON === */
+    .play-button {
+      position: relative;
+      z-index: 2;
+      display: inline-block;
+      padding: 20px 80px;
+      font-size: 2.5rem;
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #8fa88e;
+      background: rgba(217, 217, 217, 0.04);
+      border: 2px solid rgba(100, 130, 110, 0.5);
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 10px rgba(140, 180, 140, 0.2);
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      font-family: 'Trebuchet MS', 'Arial Black', sans-serif;
+    }
+
+    .play-button:hover {
+      background: rgba(140, 180, 140, 0.1);
+      border-color: rgba(140, 180, 140, 0.7);
+      color: #a8c4a7;
+      animation: btnGlitch 0.4s steps(1) infinite;
+      text-shadow: 0 0 20px rgba(140, 180, 140, 0.5);
+    }
+
+    /* Button glitch on hover */
+    @keyframes btnGlitch {
+      0%   { transform: translate(0, 0);   clip-path: inset(0 0 0 0); }
+      10%  { transform: translate(-3px, 1px); clip-path: inset(5% 0 85% 0); }
+      15%  { transform: translate(3px, -1px); clip-path: inset(40% 0 30% 0); }
+      20%  { transform: translate(0, 0);    clip-path: inset(0 0 0 0); }
+      40%  { transform: translate(0, 0);    clip-path: inset(0 0 0 0); }
+      45%  { transform: translate(2px, 0);  clip-path: inset(70% 0 10% 0); text-shadow: -2px 0 #ff003c, 2px 0 #00ff9f; }
+      50%  { transform: translate(-1px, 1px); clip-path: inset(20% 0 60% 0); text-shadow: 2px 0 #ff003c, -2px 0 #00ff9f; }
+      55%  { transform: translate(0, 0);    clip-path: inset(0 0 0 0); text-shadow: 0 0 20px rgba(140, 180, 140, 0.5); }
+      100% { transform: translate(0, 0);    clip-path: inset(0 0 0 0); }
+    }
+
+    .play-button:active {
+      transform: scale(0.97);
+      animation: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="intro-screen">
+    <div class="glitch-layers">
+      <div class="layer"></div>
+      <div class="layer"></div>
+    </div>
+    <div class="flare"></div>
+    <h1 class="title">Intruder</h1>
+    <a class="play-button" href="#" id="playBtn">Play?</a>
+    <audio id="titleMusic" src="Audio/FNAF 1_ Main Menu Theme.mp3" loop preload="auto" autoplay></audio>
+  </div>
+  <script>
+    // Try autoplay immediately; if browser blocks it, retry on first user interaction
+    const music = document.getElementById('titleMusic');
+    music.play().catch(() => {
+      function startMusic() {
+        music.play();
+        document.removeEventListener('click', startMusic);
+        document.removeEventListener('keydown', startMusic);
+      }
+      document.addEventListener('click', startMusic);
+      document.addEventListener('keydown', startMusic);
+    });
+  </script>
+</body>
+</html>
