@@ -356,6 +356,54 @@
       animation: scanline 8s linear infinite;
       pointer-events: none; z-index: 0;
     }
+    .froze-text {
+      font-size: 3.5rem; font-weight: 900;
+      font-style: italic; text-transform: uppercase;
+      color: #8b0000;
+      text-shadow: 0 0 8px rgba(139,0,0,0.3), 0 0 16px rgba(139,0,0,0.15), 0 2px 4px rgba(80,0,0,0.3);
+      margin-bottom: 20px; z-index: 2;
+      user-select: none;
+      animation: titleGlitch 4.5s steps(1) infinite, bloodPulse 2s ease-in-out infinite alternate;
+      background: linear-gradient(180deg, #ff003c 0%, #8b0000 40%, #4a0000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 4px rgba(139,0,0,0.3)) drop-shadow(0 2px 4px rgba(80,0,0,0.2));
+    }
+    @keyframes bloodPulse {
+      0%   { filter: drop-shadow(0 0 4px rgba(139,0,0,0.3)) drop-shadow(0 2px 4px rgba(80,0,0,0.2)); }
+      100% { filter: drop-shadow(0 0 8px rgba(200,0,30,0.4)) drop-shadow(0 3px 6px rgba(120,0,0,0.3)); }
+    }
+
+    /* Staggered dissolve-in for end screen elements */
+    .end-fade { opacity: 0; transition: opacity 1.5s ease; }
+    .end-fade.visible { opacity: 1; }
+
+    .died-text {
+      font-size: 3.5rem; font-weight: 900;
+      font-style: italic; text-transform: uppercase;
+      color: #8b0000;
+      text-shadow: 0 0 8px rgba(139,0,0,0.3), 0 0 16px rgba(139,0,0,0.15), 0 2px 4px rgba(80,0,0,0.3);
+      margin-bottom: 20px; z-index: 2;
+      user-select: none;
+      animation: titleGlitch 4.5s steps(1) infinite, bloodPulse 2s ease-in-out infinite alternate;
+      background: linear-gradient(180deg, #ff003c 0%, #8b0000 40%, #4a0000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 4px rgba(139,0,0,0.3)) drop-shadow(0 2px 4px rgba(80,0,0,0.2));
+    }
+
+    .survived-text {
+      font-size: 3.5rem; font-weight: 900;
+      font-style: italic; text-transform: uppercase;
+      color: #00cc55;
+      text-shadow: 0 0 8px rgba(0,200,80,0.3), 0 0 16px rgba(0,200,80,0.15), 0 2px 4px rgba(0,0,0,0.6);
+      margin-bottom: 20px; z-index: 2;
+      user-select: none;
+      animation: titleGlitch 4.5s steps(1) infinite;
+    }
+
     .end-quote {
       font-size: 2.2rem; font-weight: 700;
       font-style: italic; text-align: center;
@@ -407,6 +455,140 @@
       text-shadow: 0 0 10px rgba(100,150,220,0.4);
       user-select: none;
     }
+
+    /* ===== TIMELINE ===== */
+    .timeline-link {
+      position: absolute; bottom: 24px; left: 24px; z-index: 3;
+      font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+      color: rgba(142,159,184,0.5); text-decoration: none;
+      letter-spacing: 2px; transition: color 0.3s;
+    }
+    .timeline-link:hover { color: rgba(142,159,184,1); text-shadow: 0 0 8px rgba(100,150,220,0.4); }
+
+    .timeline-back {
+      position: absolute; top: 24px; left: 24px; z-index: 3;
+      font-size: 0.9rem; font-weight: 700; text-transform: uppercase;
+      color: rgba(142,159,184,0.6); text-decoration: none;
+      letter-spacing: 2px; transition: color 0.3s;
+    }
+    .timeline-back:hover { color: rgba(142,159,184,1); text-shadow: 0 0 8px rgba(100,150,220,0.4); }
+
+    .tl-quotes-bg {
+      position: absolute; inset: 0; z-index: 1;
+      overflow: hidden; pointer-events: none;
+    }
+    .tl-quotes-bg span {
+      position: absolute;
+      font-size: 0.85rem; font-style: italic; font-weight: 600;
+      color: rgba(142,159,184,0.25);
+      white-space: normal;
+      max-width: 40%;
+      line-height: 1.4;
+      user-select: none;
+    }
+
+    .timeline-container {
+      position: relative; z-index: 2;
+      width: 95%; max-width: 1400px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0; overflow-y: auto; max-height: 90vh;
+      padding: 40px 0;
+    }
+    .timeline-container::-webkit-scrollbar { width: 4px; }
+    .timeline-container::-webkit-scrollbar-thumb { background: rgba(100,150,220,0.3); border-radius: 2px; }
+
+    .tl-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; width: 100%;
+    }
+
+    .tl-arrow {
+      color: rgba(100,150,220,0.5); font-size: 1.6rem; user-select: none;
+      text-shadow: 0 0 6px rgba(100,150,220,0.3);
+      flex-shrink: 0;
+    }
+
+    .tl-node {
+      display: flex; flex-direction: column; align-items: center;
+      cursor: pointer; text-decoration: none;
+      transition: transform 0.2s, filter 0.2s;
+      flex-shrink: 0;
+    }
+    .tl-node:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+    .tl-thumb {
+      width: 130px; height: 74px; object-fit: cover;
+      border: 2px solid rgba(100,150,220,0.3); border-radius: 6px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+      background: #111;
+    }
+    .tl-thumb.video-thumb {
+      border-color: rgba(100,150,220,0.15);
+    }
+    .tl-endings .tl-thumb {
+      width: 100px; height: 58px;
+    }
+
+    .tl-label {
+      margin-top: 8px; font-size: 0.65rem; font-weight: 700;
+      color: rgba(142,159,184,0.7); text-transform: uppercase;
+      letter-spacing: 1px; text-align: center;
+      max-width: 110px; line-height: 1.3;
+    }
+
+    .tl-branch {
+      display: flex; gap: 30px; justify-content: center; align-items: stretch;
+      width: 100%; margin: 8px 0;
+      --half-gap: 15px;
+    }
+
+    .tl-col {
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      flex: 1 1 0; min-width: 0; max-width: 400px;
+      position: relative; overflow: visible;
+    }
+
+    .tl-endings {
+      display: flex; gap: 8px; justify-content: center; align-items: flex-start;
+      margin-top: 4px;
+      --half-gap: 4px;
+    }
+
+    /* Horizontal connector lines spanning branch columns */
+    .tl-branch > .tl-col::before,
+    .tl-endings > .tl-col::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      height: 2px;
+      background: rgba(100,150,220,0.3);
+      z-index: 0;
+    }
+    .tl-branch > .tl-col:first-child::before,
+    .tl-endings > .tl-col:first-child::before {
+      left: 50%;
+      width: calc(50% + var(--half-gap));
+    }
+    .tl-branch > .tl-col:last-child::before,
+    .tl-endings > .tl-col:last-child::before {
+      right: 50%;
+      width: calc(50% + var(--half-gap));
+    }
+    .tl-branch > .tl-col:not(:first-child):not(:last-child)::before,
+    .tl-endings > .tl-col:not(:first-child):not(:last-child)::before {
+      left: calc(-1 * var(--half-gap));
+      width: calc(100% + 2 * var(--half-gap));
+    }
+    .tl-branch > .tl-col:only-child::before,
+    .tl-endings > .tl-col:only-child::before {
+      display: none;
+    }
+
+    .tl-divider {
+      width: 2px; height: 24px;
+      background: rgba(100,150,220,0.3);
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -420,7 +602,188 @@
     <div class="flare"></div>
     <h1 class="title">Intruder</h1>
     <a class="btn" href="#" id="playBtn">Play?</a>
+    <a class="timeline-link" href="#" id="btnTimeline">Timeline</a>
     <audio id="titleMusic" src="Audio/FNAF 1_ Main Menu Theme.mp3" loop preload="auto" autoplay></audio>
+  </div>
+
+  <!-- SCREEN: TIMELINE -->
+  <div id="timelineScreen" class="screen glitch-bg">
+    <div class="glitch-layers"><div class="layer"></div><div class="layer"></div></div>
+    <div class="tl-quotes-bg" id="tlQuotesBg"></div>
+    <a class="timeline-back" href="#" id="btnTimelineBack">&larr; Back</a>
+    <div class="timeline-container">
+
+      <!-- Intro -->
+      <div class="tl-row">
+        <div class="tl-node" data-tl-video="videos/Intro scene.mp4">
+          <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.6rem;">▶ VIDEO</div>
+          <span class="tl-label">Intro Scene</span>
+        </div>
+      </div>
+      <div class="tl-row"><div class="tl-divider"></div></div>
+      <div class="tl-row"><div class="tl-arrow">▼</div></div>
+      <div class="tl-row"><div class="tl-divider"></div></div>
+
+      <!-- Choose Drink -->
+      <div class="tl-row">
+        <div class="tl-node" data-tl-step="drink">
+          <img class="tl-thumb" src="IMG/Choose Drink0.jpg" alt="Choose Drink">
+          <span class="tl-label">Choose Drink</span>
+        </div>
+      </div>
+      <div class="tl-row"><div class="tl-divider"></div></div>
+      <div class="tl-row"><div class="tl-divider"></div></div>
+
+      <!-- Drink branches -->
+      <div class="tl-branch">
+        <div class="tl-col">
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-video="videos/Can Bottle.mp4">
+            <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.6rem;">▶ VIDEO</div>
+            <span class="tl-label">Can Bottle</span>
+          </div>
+        </div>
+        <div class="tl-col">
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-video="videos/Glass bottle.mp4">
+            <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.6rem;">▶ VIDEO</div>
+            <span class="tl-label">Glass Bottle</span>
+          </div>
+        </div>
+      </div>
+      <div class="tl-row"><div class="tl-divider"></div></div>
+      <div class="tl-row"><div class="tl-arrow">▼</div></div>
+      <div class="tl-row"><div class="tl-divider"></div></div>
+
+      <!-- Choose Door -->
+      <div class="tl-row">
+        <div class="tl-node" data-tl-step="door">
+          <img class="tl-thumb" src="IMG/Choose Door 1st0.jpg" alt="Choose Door">
+          <span class="tl-label">Lock Door?</span>
+        </div>
+      </div>
+      <div class="tl-row"><div class="tl-divider"></div></div>
+
+      <!-- Door 3 branches -->
+      <div class="tl-branch">
+        <!-- Lock path -->
+        <div class="tl-col">
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-video="videos/Lock Door.mp4">
+            <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.6rem;">▶ VIDEO</div>
+            <span class="tl-label">Lock Door</span>
+          </div>
+          <div class="tl-divider"></div>
+          <div class="tl-arrow">▼</div>
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-step="lockOpen">
+            <img class="tl-thumb" src="IMG/Open Door 20.jpg" alt="Open Door">
+            <span class="tl-label">Open / Don't Enter</span>
+          </div>
+          <div class="tl-divider"></div>
+          <div class="tl-arrow">▼</div>
+          <div class="tl-endings">
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/Lock Door Open.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.55rem;">▶ VIDEO</div>
+                <span class="tl-label">Open</span>
+              </div>
+            </div>
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/Lock door self open.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#2e1a1a,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(200,100,100,0.5);font-size:0.55rem;">⏱ FREEZE</div>
+                <span class="tl-label">Froze</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Investigate path -->
+        <div class="tl-col">
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-video="videos/car.mp4">
+            <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.6rem;">▶ VIDEO</div>
+            <span class="tl-label">Investigate (Car)</span>
+          </div>
+          <div class="tl-divider"></div>
+          <div class="tl-arrow">▼</div>
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-step="car">
+            <img class="tl-thumb" src="IMG/Lock Car0.jpg" alt="Car Choice">
+            <span class="tl-label">Get Out / Lock Car</span>
+          </div>
+          <div class="tl-divider"></div>
+          <div class="tl-arrow">▼</div>
+          <div class="tl-endings">
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/car get out.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a2e1a,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(100,200,100,0.5);font-size:0.55rem;">✓ SURVIVE</div>
+                <span class="tl-label">Get Out</span>
+              </div>
+            </div>
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/Car lock.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.55rem;">▶ VIDEO</div>
+                <span class="tl-label">Lock Car</span>
+              </div>
+            </div>
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/Car Freeze.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#2e1a1a,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(200,100,100,0.5);font-size:0.55rem;">⏱ FREEZE</div>
+                <span class="tl-label">Froze</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unlock path (froze on door) -->
+        <div class="tl-col">
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-video="videos/unlocked door.mp4">
+            <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#2e1a1a,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(200,100,100,0.5);font-size:0.6rem;">⏱ FREEZE</div>
+            <span class="tl-label">Froze (Door left Unlocked)</span>
+          </div>
+          <div class="tl-divider"></div>
+          <div class="tl-arrow">▼</div>
+          <div class="tl-divider"></div>
+          <div class="tl-node" data-tl-step="unlock">
+            <img class="tl-thumb" src="IMG/Call 9110.jpg" alt="Call 911">
+            <span class="tl-label">Call 911 / Run</span>
+          </div>
+          <div class="tl-divider"></div>
+          <div class="tl-arrow">▼</div>
+          <div class="tl-endings">
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/unlock door phone.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.55rem;">▶ VIDEO</div>
+                <span class="tl-label">Call 911</span>
+              </div>
+            </div>
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/unlock door run.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(142,159,184,0.5);font-size:0.55rem;">▶ VIDEO</div>
+                <span class="tl-label">Run</span>
+              </div>
+            </div>
+            <div class="tl-col">
+              <div class="tl-divider"></div>
+              <div class="tl-node" data-tl-video="videos/unlock door freeze.mp4">
+                <div class="tl-thumb video-thumb" style="background:linear-gradient(135deg,#2e1a1a,#0d0d0d);display:flex;align-items:center;justify-content:center;color:rgba(200,100,100,0.5);font-size:0.55rem;">⏱ FREEZE</div>
+                <span class="tl-label">Froze</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- SCREEN 2: VIDEO -->
@@ -513,25 +876,66 @@
   <div id="endScreen" class="screen">
     <div class="glitch-layers"><div class="layer"></div><div class="layer"></div></div>
     <div class="flare"></div>
-    <p class="end-quote">No matter where you are, your brain reacts before you think.</p>
-    <div class="end-choices">
+    <p class="survived-text end-fade" id="survivedText" style="display:none;">You Survived.</p>
+    <p class="died-text end-fade" id="diedText" style="display:none;">You Died.</p>
+    <p class="froze-text end-fade" id="frozeText" style="display:none;">You Froze.</p>
+    <p class="end-quote end-fade" id="endQuote">No matter where you are, your brain reacts before you even think.</p>
+    <div class="end-choices end-fade" id="endChoices">
       <a class="btn" href="#" id="btnRetry">Try Again</a>
       <a class="btn" href="#" id="btnRestart">Back to Start</a>
     </div>
+    <audio id="endMusic" src="Audio/Song of Unhealing - The legend of Zelda Majoras Mask.mp3" loop preload="auto"></audio>
+    <audio id="selectSfx" src="Audio/Resident Evil 2 Sound Effects - Cursor Select.mp3" preload="auto"></audio>
   </div>
 
   <script>
+    /* ===== QUOTES ===== */
+    const quotes = [
+      'No matter where you are, your brain reacts before you even think.',
+      'Your mind moves in milliseconds; your thoughts follow in seconds.',
+      'Your subconscious decides before your logic can debate.',
+      'The body reacts to survive; the mind thinks to understand.',
+      'Your survival is a reflex; your logic is an afterthought.',
+      'In the moment of panic, the amygdala hijacks the wheel.',
+      'The body freezes to hide when it\'s too tired to run.',
+      'Before you can say \'danger,\' your heart has already started the race.',
+      'The primitive brain doesn\'t ask for permission to save you.'
+    ];
+
+    // Populate timeline background with scattered quotes
+    (function populateTlQuotes() {
+      const bg = document.getElementById('tlQuotesBg');
+      quotes.forEach((q, i) => {
+        const span = document.createElement('span');
+        span.textContent = '"' + q + '"';
+        span.style.top = (5 + (i * 11) % 85) + '%';
+        span.style.left = ((i * 37 + 3) % 55) + '%';
+        bg.appendChild(span);
+      });
+    })();
+
     /* ===== AUDIO ===== */
     const music = document.getElementById('titleMusic');
-    music.play().catch(() => {
-      function startMusic() {
-        music.play();
-        document.removeEventListener('click', startMusic);
-        document.removeEventListener('keydown', startMusic);
+    let musicStarted = false;
+
+    function startMusic() {
+      if (musicStarted) return;
+      music.play().then(() => { musicStarted = true; }).catch(() => {});
+    }
+
+    // Try autoplay
+    startMusic();
+
+    // Fallback: play on first interaction, but only while on title screen
+    function onFirstInteraction() {
+      if (document.getElementById('titleScreen').classList.contains('active')) {
+        startMusic();
       }
-      document.addEventListener('click', startMusic);
-      document.addEventListener('keydown', startMusic);
-    });
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('keydown', onFirstInteraction);
+    }
+    document.addEventListener('click', onFirstInteraction);
+    document.addEventListener('keydown', onFirstInteraction);
 
     /* ===== HELPERS ===== */
     const overlay = document.getElementById('blackOverlay');
@@ -555,7 +959,11 @@
 
     playBtn.addEventListener('click', e => {
       e.preventDefault();
+      playSelectSfx();
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('keydown', onFirstInteraction);
       music.pause();
+      music.currentTime = 0;
       dissolve(() => {
         video.src = 'videos/Intro scene.mp4';
         showScreen('videoScreen');
@@ -570,7 +978,9 @@
     let doorPath = '';
 
     video.addEventListener('ended', () => {
-      if (gameStep === 'intro') {
+      if (gameStep === 'timeline') {
+        dissolve(() => { showScreen('timelineScreen'); fadeIn(); });
+      } else if (gameStep === 'intro') {
         gameStep = 'drink';
         dissolve(() => { showScreen('choiceScreen'); fadeIn(); startCountdown('drink'); });
       } else if (gameStep === 'drink') {
@@ -594,12 +1004,58 @@
       } else {
         // terminal video ended → show end screen
         gameStep = 'end';
-        dissolve(() => { showScreen('endScreen'); fadeIn(); });
+        dissolve(() => {
+          // Reset all fade elements
+          const survivedText = document.getElementById('survivedText');
+          const diedText = document.getElementById('diedText');
+          survivedText.classList.remove('visible');
+          survivedText.style.display = 'none';
+          diedText.classList.remove('visible');
+          diedText.style.display = 'none';
+          frozeText.classList.remove('visible');
+          document.getElementById('endQuote').classList.remove('visible');
+          document.getElementById('endChoices').classList.remove('visible');
+
+          frozeText.style.display = playerFroze ? 'block' : 'none';
+          survivedText.style.display = playerSurvived ? 'block' : 'none';
+          diedText.style.display = (!playerFroze && !playerSurvived) ? 'block' : 'none';
+          showScreen('endScreen');
+          document.getElementById('endQuote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+          endMusic.currentTime = 0;
+          endMusic.play();
+          fadeIn();
+
+          // Staggered dissolve-in: status text, then quote, then choices
+          let delay = 500;
+          if (playerSurvived) {
+            setTimeout(() => survivedText.classList.add('visible'), delay);
+            delay += 2000;
+          } else if (playerFroze) {
+            setTimeout(() => frozeText.classList.add('visible'), delay);
+            delay += 2000;
+          } else {
+            setTimeout(() => diedText.classList.add('visible'), delay);
+            delay += 2000;
+          }
+          setTimeout(() => document.getElementById('endQuote').classList.add('visible'), delay);
+          setTimeout(() => document.getElementById('endChoices').classList.add('visible'), delay + 2000);
+        });
       }
     });
 
     /* ===== LAST CHOICE TRACKING ===== */
-    let lastChoiceStep = 'door'; // the step the player should retry from
+    let lastChoiceStep = 'door';
+    let playerFroze = false;
+    let playerSurvived = false;
+    const endMusic = document.getElementById('endMusic');
+    const frozeText = document.getElementById('frozeText');
+    const selectSfx = document.getElementById('selectSfx');
+
+    function playSelectSfx() {
+      const clone = selectSfx.cloneNode();
+      clone.currentTime = 0.75;
+      clone.play();
+    }
 
     /* ===== COUNTDOWN SYSTEM ===== */
     const CIRC = 2 * Math.PI * 36;
@@ -616,15 +1072,18 @@
 
     const freezeActions = {
       drink:    () => pickDrink(Math.random() < 0.5 ? 'glass' : 'can'),
-      door:     () => pickDoor('none'),
-      car:      () => pickCar('freeze'),
-      lockOpen: () => pickLockOpen('dontenter'),
-      unlock:   () => pickUnlock('freeze'),
+      door:     () => { playerFroze = true; pickDoor('none'); },
+      car:      () => { playerFroze = true; pickCar('freeze'); },
+      lockOpen: () => { playerFroze = true; pickLockOpen('dontenter'); },
+      unlock:   () => { playerFroze = true; pickUnlock('freeze'); },
     };
 
     function startCountdown(type) {
       choiceMade = false;
-      let remaining = 5;
+      playerFroze = false;
+      playerSurvived = false;
+      const total = type === 'drink' ? 5 : 3;
+      let remaining = total;
       const circleEl = document.getElementById(countdownEls[type].circle);
       const numEl    = document.getElementById(countdownEls[type].num);
 
@@ -636,11 +1095,11 @@
       function tick() {
         remaining--;
         circleEl.style.transition = 'stroke-dashoffset 1s linear';
-        circleEl.style.strokeDashoffset = CIRC * ((5 - remaining) / 5);
+        circleEl.style.strokeDashoffset = CIRC * ((total - remaining) / total);
         numEl.textContent = remaining;
         if (remaining <= 0) {
           clearInterval(countdownTimer);
-          if (!choiceMade) freezeActions[type]();
+          if (!choiceMade) setTimeout(() => { if (!choiceMade) freezeActions[type](); }, 1000);
         }
       }
       countdownTimer = setInterval(tick, 1000);
@@ -654,6 +1113,7 @@
     function pickDrink(choice) {
       if (choiceMade) return;
       choiceMade = true;
+      playSelectSfx();
       clearInterval(countdownTimer);
       playVideo(choice === 'glass' ? 'videos/Glass bottle.mp4' : 'videos/Can Bottle.mp4');
     }
@@ -664,6 +1124,7 @@
     function pickDoor(choice) {
       if (choiceMade) return;
       choiceMade = true;
+      playSelectSfx();
       clearInterval(countdownTimer);
       doorPath = choice;
       const src = choice === 'lock' ? 'videos/Lock Door.mp4'
@@ -678,7 +1139,9 @@
     function pickCar(choice) {
       if (choiceMade) return;
       choiceMade = true;
+      playSelectSfx();
       clearInterval(countdownTimer);
+      if (choice === 'getout') playerSurvived = true;
       const src = choice === 'getout' ? 'videos/car get out.mp4'
                 : choice === 'lockcar' ? 'videos/Car lock.mp4'
                 : 'videos/Car Freeze.mp4';
@@ -691,6 +1154,7 @@
     function pickLockOpen(choice) {
       if (choiceMade) return;
       choiceMade = true;
+      playSelectSfx();
       clearInterval(countdownTimer);
       const src = choice === 'open' ? 'videos/Lock Door Open.mp4'
                 : 'videos/Lock door self open.mp4';  // don't enter OR freeze
@@ -703,6 +1167,7 @@
     function pickUnlock(choice) {
       if (choiceMade) return;
       choiceMade = true;
+      playSelectSfx();
       clearInterval(countdownTimer);
       const src = choice === 'call911' ? 'videos/unlock door phone.mp4'
                 : choice === 'run' ? 'videos/unlock door run.mp4'
@@ -715,6 +1180,10 @@
     /* ===== END SCREEN BUTTONS ===== */
     document.getElementById('btnRetry').addEventListener('click', e => {
       e.preventDefault();
+      playSelectSfx();
+      endMusic.pause();
+      playerFroze = false;
+      playerSurvived = false;
       gameStep = lastChoiceStep;
       const screenMap = { door: 'doorScreen', car: 'carScreen', lockOpen: 'lockOpenScreen', unlock: 'unlockScreen' };
       dissolve(() => {
@@ -726,6 +1195,10 @@
 
     document.getElementById('btnRestart').addEventListener('click', e => {
       e.preventDefault();
+      playSelectSfx();
+      endMusic.pause();
+      playerFroze = false;
+      playerSurvived = false;
       dissolve(() => {
         gameStep = 'intro';
         doorPath = '';
@@ -737,9 +1210,55 @@
       });
     });
 
+    /* ===== TIMELINE ===== */
+    document.getElementById('btnTimeline').addEventListener('click', e => {
+      e.preventDefault();
+      playSelectSfx();
+      dissolve(() => { showScreen('timelineScreen'); fadeIn(); });
+    });
+    document.getElementById('btnTimelineBack').addEventListener('click', e => {
+      e.preventDefault();
+      playSelectSfx();
+      dissolve(() => { showScreen('titleScreen'); fadeIn(); });
+    });
+
+    // Timeline node clicks
+    document.querySelectorAll('.tl-node').forEach(node => {
+      node.addEventListener('click', e => {
+        e.preventDefault();
+        playSelectSfx();
+        const videoSrc = node.dataset.tlVideo;
+        const step = node.dataset.tlStep;
+
+        if (videoSrc) {
+          // Play this video then return to timeline
+          gameStep = 'timeline';
+          music.pause();
+          dissolve(() => {
+            video.src = videoSrc;
+            showScreen('videoScreen');
+            video.play();
+            fadeIn();
+          });
+        } else if (step) {
+          // Jump to that choice screen
+          const screenMap = { drink: 'choiceScreen', door: 'doorScreen', car: 'carScreen', lockOpen: 'lockOpenScreen', unlock: 'unlockScreen' };
+          gameStep = step;
+          lastChoiceStep = step;
+          music.pause();
+          dissolve(() => {
+            showScreen(screenMap[step]);
+            fadeIn();
+            startCountdown(step);
+          });
+        }
+      });
+    });
+
     /* ===== SKIP BUTTON ===== */
     document.getElementById('skipBtn').addEventListener('click', e => {
       e.preventDefault();
+      playSelectSfx();
       video.pause();
       video.dispatchEvent(new Event('ended'));
     });
